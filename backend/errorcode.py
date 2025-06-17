@@ -6,6 +6,7 @@ from gf256 import GF256
 
 # x, y: 多項式の係数, yはモニック, x % yを求める
 def CalculateRemainder(x, y):
+    x = x.copy()
     if len(x) < len(y):
         return x
     for i in range(len(x) - len(y) + 1):
@@ -17,7 +18,8 @@ def GenerateErrorCodeBlock(data_code_block, error_code_len):
     data_code_block = [GF256(data_code) for data_code in data_code_block] + [GF256(0)] * error_code_len
     data_code_block = np.array(data_code_block)
     generating_polynomial = np.array(ecd.generating_polynomial_coefficient[str(error_code_len)])
-    return [x.value for x in CalculateRemainder(data_code_block, generating_polynomial)]
+    remainder = CalculateRemainder(data_code_block, generating_polynomial)
+    return [x.value for x in remainder]
 
 
 

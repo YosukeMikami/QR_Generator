@@ -2,3 +2,4 @@ backend/temp.py
 backend/test.py
 backend/fig.png
 backend/*.txt
+backend/__pycache__

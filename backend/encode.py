@@ -2,9 +2,9 @@ import sys
 
 import numpy as np
 
-import bch
 import data
 import errorcorrectiondata as ecd
+from errorcode import CalculateRemainder
 from data import Mode
 
 
@@ -194,7 +194,7 @@ def EncodeFormatInfo(error_correction_level, mask_pattern):
         code = np.append(code, [True, False])
     code = np.append(code, BitToList(mask_pattern, 3))
     code_shifted = np.append(code, [False for _ in range(10)])
-    error_code = bch.CalcRemainder(code_shifted, np.array([True, False, True, False, False, True, True, False, True, True, True]))
+    error_code = CalculateRemainder(code_shifted, np.array([True, False, True, False, False, True, True, False, True, True, True]))
     code = np.append(code, [error_code])
     res = ListToBit(code, code.shape[0])
     return res ^ 0b101010000010010
@@ -205,7 +205,7 @@ def EncodeVersionInfo(version):
         return 0
     code = BitToList(version, 6)
     code_shifted = np.append(code, [False for _ in range(12)])
-    error_code = bch.CalcRemainder(code_shifted, np.array([True, True, True, True, True, False, False, True, False, False, True, False, True]))
+    error_code = CalculateRemainder(code_shifted, np.array([True, True, True, True, True, False, False, True, False, False, True, False, True]))
     code = np.append(code, [error_code])
     res = ListToBit(code, code.shape[0])
     return res
