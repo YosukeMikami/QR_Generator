@@ -1,7 +1,5 @@
 import sys
 
-import numpy as np
-
 import data
 import errorcorrectiondata as ecd
 from errorcode import CalculateRemainder
@@ -11,7 +9,7 @@ from data import Mode
 class Segment:
     def __init__(self, mode):
         self.mode = mode
-        self.code = np.array([], dtype=bool)
+        self.code = []
         self.len = 0
 
     def __repr__(self):
@@ -19,7 +17,7 @@ class Segment:
 
 
 def BitToList(bit, length):
-    return np.array([True if (bit >> (length - i - 1)) & 1 == 1 else False for i in range(length)])
+    return [True if (bit >> (length - i - 1)) & 1 == 1 else False for i in range(length)]
 
 
 def ListToBit(list, length):
@@ -85,30 +83,30 @@ def EncodeKanji(char):
 def Encode(string, error_correction_level):
     segment = Segment(Mode.kEightBitByte)
     for char in string:
-        segment.code = np.append(segment.code, Encode8BitByte(char))
+        segment.code.extend(Encode8BitByte(char))
     version = DecideVersion(4 + data.LenIndicatorLen(1, Mode.kEightBitByte) + len(segment.code), error_correction_level)
     if version <= 9:
         segment.len = len(segment.code) // 8
         indicater_len = data.LenIndicatorLen(1, Mode.kEightBitByte)
-        data_code = np.array(BitToList(segment.mode, 4))
-        data_code = np.append(data_code, BitToList(segment.len, indicater_len))
-        data_code = np.append(data_code, segment.code)
+        data_code = BitToList(segment.mode, 4)
+        data_code.extend(BitToList(segment.len, indicater_len))
+        data_code.extend(segment.code)
         return data_code, version
     version = DecideVersion(4 + data.LenIndicatorLen(10, Mode.kEightBitByte) + len(segment.code), error_correction_level)
     if version <= 26:
         segment.len = len(segment.code) // 8
         indicater_len = data.LenIndicatorLen(10, Mode.kEightBitByte)
-        data_code = np.array(BitToList(segment.mode, 4))
-        data_code = np.append(data_code, BitToList(segment.len, indicater_len))
-        data_code = np.append(data_code, segment.code)
+        data_code = BitToList(segment.mode, 4)
+        data_code.extend(BitToList(segment.len, indicater_len))
+        data_code.extend(segment.code)
         return data_code, version
     version = DecideVersion(4 + data.LenIndicatorLen(27, Mode.kEightBitByte) + len(segment.code), error_correction_level)
     if version <= 40:
         segment.len = len(segment.code) // 8
         indicater_len = data.LenIndicatorLen(27, Mode.kEightBitByte)
-        data_code = np.array(BitToList(segment.mode, 4))
-        data_code = np.append(data_code, BitToList(segment.len, indicater_len))
-        data_code = np.append(data_code, segment.code)
+        data_code = BitToList(segment.mode, 4)
+        data_code.extend(BitToList(segment.len, indicater_len))
+        data_code.extend(segment.code)
         return data_code, version
     print("The input string is too long to encode!")
     sys.exit(1)
@@ -116,10 +114,10 @@ def Encode(string, error_correction_level):
 
 def DivideCodePer8Bit(code):
     code_len = len(code)
-    res = np.array([], dtype=int)
+    res = []
     for i in range(code_len // 8):
         word = ListToBit(code[i * 8:i * 8 + 8], 8)
-        res = np.append(res, [word])
+        res.append(word)
     return res
 
 
@@ -149,16 +147,16 @@ def DecideVersion(data_code_len, error_correction_level):
 
 
 def PaddingDataCode(data_code, version, error_correction_level):
-    data_len = data_code.shape[0]
+    data_len = len(data_code)
     if data_len % 8 != 0:
         for _ in range(8 - data_len % 8):
-            data_code = np.append(data_code, [False])
+            data_code.append(False)
     padding_first = True
-    for _ in range(DataCodeWordNum(version, error_correction_level) - data_code.shape[0] // 8):
+    for _ in range(DataCodeWordNum(version, error_correction_level) - len(data_code) // 8):
         if padding_first:
-            data_code = np.append(data_code, [True, True, True, False, True, True, False, False])
+            data_code.extend([True, True, True, False, True, True, False, False])
         else:
-            data_code = np.append(data_code, [False, False, False, True, False, False, False, True])
+            data_code.extend([False, False, False, True, False, False, False, True])
         padding_first = not padding_first
     return data_code
 
@@ -183,20 +181,20 @@ def DivideIntoCodeBlock(data_code_per_8b, version, error_correction_level):
 
 
 def EncodeFormatInfo(error_correction_level, mask_pattern):
-    code = np.array([], dtype=bool)
+    code = []
     if error_correction_level == ecd.Level.kL:
-        code = np.append(code, [False, True])
+        code.extend([False, True])
     elif error_correction_level == ecd.Level.kM:
-        code = np.append(code, [False, False])
+        code.extend([False, False])
     elif error_correction_level == ecd.Level.kQ:
-        code = np.append(code, [True, True])
+        code.extend([True, True])
     else:
-        code = np.append(code, [True, False])
-    code = np.append(code, BitToList(mask_pattern, 3))
-    code_shifted = np.append(code, [False for _ in range(10)])
-    error_code = CalculateRemainder(code_shifted, np.array([True, False, True, False, False, True, True, False, True, True, True]))
-    code = np.append(code, [error_code])
-    res = ListToBit(code, code.shape[0])
+        code.extend([True, False])
+    code.extend(BitToList(mask_pattern, 3))
+    code_shifted = code + [False] * 10
+    error_code = CalculateRemainder(code_shifted, [True, False, True, False, False, True, True, False, True, True, True])
+    code.extend(error_code)
+    res = ListToBit(code, len(code))
     return res ^ 0b101010000010010
 
 
@@ -204,8 +202,8 @@ def EncodeVersionInfo(version):
     if version <= 6:
         return 0
     code = BitToList(version, 6)
-    code_shifted = np.append(code, [False for _ in range(12)])
-    error_code = CalculateRemainder(code_shifted, np.array([True, True, True, True, True, False, False, True, False, False, True, False, True]))
-    code = np.append(code, [error_code])
+    code_shifted = code + [False] * 12
+    error_code = CalculateRemainder(code_shifted, [True, True, True, True, True, False, False, True, False, False, True, False, True])
+    code.extend(error_code)
     res = ListToBit(code, code.shape[0])
     return res

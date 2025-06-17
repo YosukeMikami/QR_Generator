@@ -123,7 +123,7 @@ def PrintWholeCode(symbol, data_code_blocks, error_code_blocks):
     while updated:
         updated = False
         for block_index in range(len(data_code_blocks)):
-            if data_code_blocks[block_index].shape[0] > data_index:
+            if len(data_code_blocks[block_index]) > data_index:
                 PrintCode(symbol, data_code_blocks[block_index][data_index], 8)
                 updated = True
         if not updated:
@@ -134,7 +134,7 @@ def PrintWholeCode(symbol, data_code_blocks, error_code_blocks):
     while updated:
         updated = False
         for block_index in range(len(error_code_blocks)):
-            if error_code_blocks[block_index].shape[0] > error_index:
+            if len(error_code_blocks[block_index]) > error_index:
                 PrintCode(symbol, error_code_blocks[block_index][error_index], 8)
                 updated = True
         if not updated:
