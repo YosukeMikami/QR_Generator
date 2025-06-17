@@ -1,6 +1,5 @@
 from collections import deque
 
-import process
 
 
 def ApplyMask(symbol, mask_pattern):
@@ -180,11 +179,9 @@ def EvalMask(symbol, mask):
 
 
 def SelectMask(symbol):
-    process.PrintProcess("Selecting mask pattern...(1/8)", 0, 8)
     min_loss = EvalMask(symbol, 0)
     min_pattern = 0
     for i in range(1, 8):
-        process.PrintProcess(f"Selecting mask pattern...({i + 1}/8)", i, 8)
         loss = EvalMask(symbol, i)
         if loss < min_loss:
             min_loss = loss

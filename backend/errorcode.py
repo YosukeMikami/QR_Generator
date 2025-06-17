@@ -1,7 +1,6 @@
 import data
 import errorcorrectiondata as ecd
 import numpy as np
-import process
 from gf2_8 import GF2_8, Solve, ValueKind
 
 
@@ -38,7 +37,6 @@ def GenerateErrorCodeBlocks(data_code_blocks, version, error_correction_level):
     error_code_blocks = []
     i = 0
     for j in range(smaller_block_num + bigger_block_num):
-        process.PrintProcess(f"Generating error correction code...({j + 1}/{smaller_block_num + bigger_block_num})", j, smaller_block_num + bigger_block_num)
         error_code_block = GenerateErrorCodeBlock(data_code_blocks[i], error_code_word_num)
         error_code_blocks.append(error_code_block)
         i += 1
