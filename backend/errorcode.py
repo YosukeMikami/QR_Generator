@@ -27,10 +27,6 @@ def GenerateErrorCodeBlock(data_code_block, error_code_len):
 
 
 def GenerateErrorCodeBlocks(data_code_blocks, version, error_correction_level):
-    total_code_word_num = data.MaxCodeSize(version) // 8
-    total_error_block_num = ecd.correction_block_num[error_correction_level][version - 1]
-    bigger_block_num = total_code_word_num % total_error_block_num
-    smaller_block_num = total_error_block_num - bigger_block_num
     error_code_word_num = ecd.error_words_per_block[error_correction_level][version - 1]
     error_code_blocks = []
     for data_code_block in data_code_blocks:
