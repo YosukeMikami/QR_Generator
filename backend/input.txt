@@ -1,0 +1,1 @@
+This is a sample text.\n You can generate a QR code in this way.
