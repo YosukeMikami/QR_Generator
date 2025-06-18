@@ -1,24 +1,24 @@
-import sys
-
-import data
 import errorcorrectiondata as ecd
 from errorcode import CalculateRemainder
-from data import Mode
+from data import Mode, EncodeSize, LenIndicatorLen
 
 class Segment:
-    def __init__(self, mode=Mode.kEightBitByte):
+    def __init__(self, mode=Mode.kEightBitByte, encode_size=EncodeSize.kSmall):
         self.mode = mode
         self.message = ""
+        self.encode_size = encode_size
 
     def Encode(self):
         if self.mode == Mode.kNumber:
-            return self.EncodeNumber()
+            self.data_code = self.EncodeNumber()
         elif self.mode == Mode.kAlphaNum:
-            return self.EncodeAlphaNum()
+            self.data_code = self.EncodeAlphaNum()
         elif self.mode == Mode.kEightBitByte:
-            return self.Encode8BitByte()
+            self.data_code = self.Encode8BitByte()
         else:
-            return self.EncodeKanji()
+            self.data_code = self.EncodeKanji()
+        header = self.EncodeHeader()
+        return header + self.data_code
 
     def BitToList(bit, length):
         return [
@@ -26,6 +26,13 @@ class Segment:
             else False\
             for i in range(length)
         ]
+
+    def EncodeHeader(self):
+        indicator_len = LenIndicatorLen(self.encode_size, self.mode)
+        header = Segment.BitToList(self.mode, 4)
+        char_num = len(self.data_code) // 8 if self.mode == Mode.kEightBitByte else len(self.message)
+        header.extend(Segment.BitToList(char_num, indicator_len))
+        return header
 
     def EncodeNumber(self):
         out = []
@@ -107,7 +114,7 @@ class Segment:
 
 
 def Encode(message):
-    segment = Segment(Mode.kKanji)
+    segment = Segment(Mode.kAlphaNum, EncodeSize.kSmall)
     for char in message:
         segment.message += char
     code = segment.Encode()
@@ -115,6 +122,12 @@ def Encode(message):
 
 
 def EncodeFormatInfo(error_correction_level, mask_pattern):
+    def ListToBit(l):
+        res = 0
+        for i, v in enumerate(l):
+            res += int(v) << (len(l) - 1 - i)
+        return res
+
     code = []
     if error_correction_level == ecd.Level.kL:
         code.extend([False, True])
@@ -124,29 +137,36 @@ def EncodeFormatInfo(error_correction_level, mask_pattern):
         code.extend([True, True])
     else:
         code.extend([True, False])
-    code.extend(BitToList(mask_pattern, 3))
+    code.extend(Segment.BitToList(mask_pattern, 3))
     code_shifted = code + [False] * 10
     error_code = CalculateRemainder(code_shifted, [True, False, True, False, False, True, True, False, True, True, True])
     code.extend(error_code)
-    res = ListToBit(code, len(code))
+    res = ListToBit(code)
     return res ^ 0b101010000010010
 
 
 def EncodeVersionInfo(version):
+    def ListToBit(l):
+        res = 0
+        for i, v in enumerate(l):
+            res += int(v) << (len(l) - 1 - i)
+        return res
+
     if version <= 6:
         return 0
-    code = BitToList(version, 6)
+    code = Segment.BitToList(version, 6)
     code_shifted = code + [False] * 12
     error_code = CalculateRemainder(code_shifted, [True, True, True, True, True, False, False, True, False, False, True, False, True])
     code.extend(error_code)
-    res = ListToBit(code, code.shape[0])
+    res = ListToBit(code)
+    print(res)
     return res
 
 if __name__ == "__main__":
-    code = Encode("茗", None)
+    code = Encode("01234567")
     s = ""
     for i, b in enumerate(code):
         s += "1" if b else "0"
-        # if i % 8 == 7:
-        #     s += " "
+        if i % 8 == 7:
+            s += " "
     print(s)

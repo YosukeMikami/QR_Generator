@@ -8,6 +8,7 @@ import qrprint
 import numpy as np
 import seaborn as sns
 import untouchable
+import midcode
 
 
 class Symbol:
@@ -20,11 +21,9 @@ class Symbol:
 
 
 def main(input_string):
-    error_correction_level = ecd.Level.kH
-    data_code, version = encode.Encode(input_string, error_correction_level)
-    data_code = encode.PaddingDataCode(data_code, version, error_correction_level)
-    data_code = encode.DivideCodePer8Bit(data_code)
-    data_code_blocks = encode.DivideIntoCodeBlock(data_code, version, error_correction_level)
+    error_correction_level = ecd.Level.kM
+    data_code = encode.Encode(input_string)
+    data_code_blocks, version = midcode.FormatCodeData4ECC(data_code, error_correction_level)
     error_code_blocks = errorcode.GenerateErrorCodeBlocks(data_code_blocks, version, error_correction_level)
 
     symbol = Symbol(version)

@@ -1,5 +1,5 @@
 import math
-from enum import IntEnum
+from enum import IntEnum, auto
 
 import numpy as np
 
@@ -16,6 +16,12 @@ class Mode(IntEnum):
     kAlphaNum = 0b0010
     kEightBitByte = 0b0100
     kKanji = 0b1000
+
+
+class EncodeSize(IntEnum):
+    kSmall = auto()
+    kMedium = auto()
+    kLarge = auto()
 
 
 def SideLen(version):
@@ -80,30 +86,30 @@ def MaxCodeSize(version):
     return OverallSize(version) - FunctionPatternSize(version) - VersionInfoSize(version)
 
 
-def LenIndicatorLen(version, mode):
+def LenIndicatorLen(encode_size, mode):
     if mode == Mode.kNumber:
-        if version <= 9:
+        if encode_size == EncodeSize.kSmall:
             return 10
-        elif version <= 26:
+        elif encode_size == EncodeSize.kMedium:
             return 12
         else:
             return 14
     elif mode == Mode.kAlphaNum:
-        if version <= 9:
+        if encode_size == EncodeSize.kSmall:
             return 9
-        elif version <= 26:
+        elif encode_size == EncodeSize.kMedium:
             return 11
         else:
             return 13
     elif mode == Mode.kEightBitByte:
-        if version <= 9:
+        if encode_size == EncodeSize.kSmall:
             return 8
         else:
             return 16
     else:
-        if version <= 9:
+        if encode_size == EncodeSize.kSmall:
             return 8
-        elif version <= 26:
+        elif encode_size == EncodeSize.kMedium:
             return 10
         else:
             return 12

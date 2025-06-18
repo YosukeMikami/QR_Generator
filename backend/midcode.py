@@ -1,5 +1,6 @@
 import errorcorrectiondata as ecd
 import data
+import math
 
 class LengthError(Exception):
     pass
@@ -30,15 +31,20 @@ def DataCodeWordCapacity(version, error_correction_level):
 
 def DecideVersion(data_code, error_correction_level):
     for version in range(1, 41):
-        if len(data_code) <= DataCodeWordCapacity(version, error_correction_level):
+        if math.ceil(len(data_code) / 8)  <= DataCodeWordCapacity(version, error_correction_level):
             return version
     raise LengthError("Input string is too long")
+
+def AppendTerminationPattern(data_code, version, error_correction_level):
+    data_code_bit_capacity = DataCodeWordCapacity(version, error_correction_level) * 8
+    pattern_len = min(4, data_code_bit_capacity - len(data_code))
+    data_code.extend([False] * pattern_len)
 
 def DivideCodePer8Bit(code):
     def ListToBit(l):
         res = 0
         for i, v in enumerate(l):
-            res += int(v) << (7 - i)
+            res += int(v) << (len(l) - 1 - i)
         return res
 
     assert len(code) % 8 == 0, "Code must be aligned"
@@ -57,7 +63,6 @@ def PaddingDataCode(data_code, version, error_correction_level):
         else:
             data_code.extend([False, False, False, True, False, False, False, True])
         padding_first = not padding_first
-    return data_code
 
 def DivideIntoCodeBlock(data_code_words, version, error_correction_level):
     (smaller_block_capacity, smaller_data_code_word_capacity),\
@@ -74,7 +79,14 @@ def DivideIntoCodeBlock(data_code_words, version, error_correction_level):
     return data_code_blocks
 
 
+def FormatCodeData4ECC(data_code, error_correction_level):
+    version = DecideVersion(data_code, error_correction_level)
+    AppendTerminationPattern(data_code, version, error_correction_level)
+    PaddingDataCode(data_code, version, error_correction_level)
+    data_code = DivideCodePer8Bit(data_code)
+    data_code_blocks = DivideIntoCodeBlock(data_code, version, error_correction_level)
+    return data_code_blocks, version
+
+
 if __name__ == "__main__":
-    code = [True] * 7 + [False] * 9
-    res = DivideCodePer8Bit(code)
-    print(res)
+    print(DataCodeWordCapacity(1, ecd.Level.kM))
