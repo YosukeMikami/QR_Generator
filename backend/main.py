@@ -24,6 +24,7 @@ def main(input_string):
     error_correction_level = ecd.Level.kM
     data_code = encode.Encode(input_string)
     data_code_blocks, version = midcode.FormatCodeData4ECC(data_code, error_correction_level)
+    print(version)
     error_code_blocks = errorcode.GenerateErrorCodeBlocks(data_code_blocks, version, error_correction_level)
 
     symbol = Symbol(version)

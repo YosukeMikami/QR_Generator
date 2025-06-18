@@ -112,12 +112,35 @@ class Segment:
             out.extend(CodeOfChar(char))
         return out
 
+def IsExclusiveNumber(char):
+    return char in "0123456789"
+
+def IsExclusiveAlphaNum(char):
+    return char in " $%*+-./:" or ord("A") <= ord(char) <= ord("Z")
+
+def IsExclusiveKanji(char):
+    code = int(char.encode("cp932").hex(), 16)
+    return not ((code >> 8) == 0)
+
+def ExclusiveTypeOf(char):
+    return Mode.kNumber if IsExclusiveNumber(char)\
+           else Mode.kAlphaNum if IsExclusiveAlphaNum(char)\
+           else Mode.kKanji if IsExclusiveKanji(char)\
+           else Mode.kEightBitByte
 
 def Encode(message):
-    segment = Segment(Mode.kAlphaNum, EncodeSize.kSmall)
-    for char in message:
-        segment.message += char
-    code = segment.Encode()
+    code = []
+    segment = Segment(ExclusiveTypeOf(message[0]), EncodeSize.kSmall)
+    segment.message += message[0]
+    for char in message[1:]:
+        char_type = ExclusiveTypeOf(char)
+        if segment.mode == char_type:
+            segment.message += char
+        else:
+            code.extend(segment.Encode())
+            segment = Segment(char_type, EncodeSize.kSmall)
+            segment.message += char
+    code.extend(segment.Encode())
     return code
 
 
@@ -163,10 +186,4 @@ def EncodeVersionInfo(version):
     return res
 
 if __name__ == "__main__":
-    code = Encode("01234567")
-    s = ""
-    for i, b in enumerate(code):
-        s += "1" if b else "0"
-        if i % 8 == 7:
-            s += " "
-    print(s)
+    print(ExclusiveTypeOf("あ"))
