@@ -1,11 +1,3 @@
-from enum import IntEnum, auto
-
-
-class ValueKind(IntEnum):
-    kBit = auto()
-    kExp = auto()
-
-
 class GF256:
     def __init__(self, value):
         assert isinstance(value, int) & 0 <= value < 256

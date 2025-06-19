@@ -2,6 +2,7 @@ import errorcorrectiondata as ecd
 from errorcode import CalculateRemainder
 from data import Mode, EncodeSize, LenIndicatorLen
 
+
 class Segment:
     def __init__(self, mode=Mode.kEightBitByte, encode_size=EncodeSize.kSmall):
         self.mode = mode
@@ -51,7 +52,6 @@ class Segment:
             except ValueError:
                 raise ValueError("Input string must contain only numbers.")
         return out
-
 
     def EncodeAlphaNum(self):
         def CodeOfAlphaNum(char):
@@ -112,21 +112,26 @@ class Segment:
             out.extend(CodeOfChar(char))
         return out
 
+
 def IsExclusiveNumber(char):
     return char in "0123456789"
+
 
 def IsExclusiveAlphaNum(char):
     return char in " $%*+-./:" or ord("A") <= ord(char) <= ord("Z")
 
+
 def IsExclusiveKanji(char):
     code = int(char.encode("cp932").hex(), 16)
     return not ((code >> 8) == 0)
+
 
 def ExclusiveTypeOf(char):
     return Mode.kNumber if IsExclusiveNumber(char)\
            else Mode.kAlphaNum if IsExclusiveAlphaNum(char)\
            else Mode.kKanji if IsExclusiveKanji(char)\
            else Mode.kEightBitByte
+
 
 def Encode(message):
     code = []
@@ -184,6 +189,7 @@ def EncodeVersionInfo(version):
     res = ListToBit(code)
     print(res)
     return res
+
 
 if __name__ == "__main__":
     print(ExclusiveTypeOf("あ"))

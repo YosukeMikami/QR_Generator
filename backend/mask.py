@@ -1,7 +1,6 @@
 from collections import deque
 
 
-
 def ApplyMask(symbol, mask_pattern):
     if mask_pattern == 0:
         for i in range(symbol.side_len):

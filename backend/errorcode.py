@@ -1,4 +1,3 @@
-import data
 import errorcorrectiondata as ecd
 import numpy as np
 from gf256 import GF256
@@ -11,7 +10,7 @@ def CalculateRemainder(x, y):
     if len(x) < len(y):
         return x
     for i in range(len(x) - len(y) + 1):
-        if isinstance(x[0], np.bool):
+        if x.dtype == np.bool:
             x[i : i + len(y)] ^= y & x[i]
         else:
             x[i : i + len(y)] -= y * x[i]
@@ -25,7 +24,6 @@ def GenerateErrorCodeBlock(data_code_block, error_code_len):
     return [x.value for x in remainder]
 
 
-
 def GenerateErrorCodeBlocks(data_code_blocks, version, error_correction_level):
     error_code_word_num = ecd.error_words_per_block[error_correction_level][version - 1]
     error_code_blocks = []
@@ -33,6 +31,7 @@ def GenerateErrorCodeBlocks(data_code_blocks, version, error_correction_level):
         error_code_block = GenerateErrorCodeBlock(data_code_block, error_code_word_num)
         error_code_blocks.append(error_code_block)
     return error_code_blocks
+
 
 if __name__ == "__main__":
     b = [32, 65, 205, 69, 41, 220, 46, 128, 236]
