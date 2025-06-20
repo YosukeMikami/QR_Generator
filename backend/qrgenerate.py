@@ -3,10 +3,8 @@ import encode
 import errorcode
 import errorcorrectiondata as ecd
 import mask
-import matplotlib.pyplot as plt
 import qrprint
 import numpy as np
-import seaborn as sns
 import untouchable
 import midcode
 
@@ -20,7 +18,17 @@ class Symbol:
         self.position = np.array([self.side_len - 1, self.side_len - 1])
 
 
-def main(input_string, error_correction_level, size=10):
+def main(input_string, error_correction_level, output_file=None, format="png", size=10., blob=False):
+    assert blob or output_file is not None, "output_file is required when blob is False"
+    if isinstance(error_correction_level, str):
+        if error_correction_level == "L":
+            error_correction_level = ecd.Level.kL
+        elif error_correction_level == "H":
+            error_correction_level = ecd.Level.kH
+        elif error_correction_level == "Q":
+            error_correction_level = ecd.Level.kQ
+        else:
+            error_correction_level = ecd.Level.kM
     # 入力データをエンコード
     data_code = encode.Encode(input_string)
     data_code_blocks, version = midcode.FormatCodeData4ECC(data_code, error_correction_level)
@@ -42,18 +50,11 @@ def main(input_string, error_correction_level, size=10):
     qrprint.PrintVersionInfo(symbol, encode.EncodeVersionInfo(version))
 
     # 出力
-    cm = 1 / 2.54
-    plt.figure(figsize=(size * cm, size * cm))
-    sns.heatmap(symbol.symbol.T, cbar=False, square=True, cmap="binary")
-    quiet_zone_ratio = 4 / (symbol.symbol.shape[0] + 8)
-    plt.subplots_adjust(
-        left = quiet_zone_ratio,
-        right = 1 - quiet_zone_ratio,
-        bottom = quiet_zone_ratio,
-        top = 1 - quiet_zone_ratio
-    )
-    plt.axis("off")
-    plt.savefig("fig.png")
+    if blob:
+        return qrprint.OutputQRAsBlob(symbol, size, format)
+    else:
+        qrprint.OutputQRAsImage(symbol, size, output_file)
+        return None
 
 if __name__ == "__main__":
-    main(input(), ecd.Level.kM)
+    main(input(), ecd.Level.kM, "fig.png")

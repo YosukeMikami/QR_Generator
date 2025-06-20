@@ -1,15 +1,58 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <button id="button" type="button">Test</button>
-    <div id="res"></div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>QRコード生成</title>
+  <link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>QRコード生成<h1>
+    </header>
+
+    <main class="main_content">
+      <textarea id="input_text" placeholder="変換したい文を入力..."  rows="5"></textarea>
+
+      <div id="config_base">
+        <div id="config">
+          <div class="config_element">
+            <label for="format_select" class="config_label">形式</label>
+            <select id="format_select" class="config_input">
+              <option value="png" selected>PNG</option>
+              <option value="jpeg">JPEG</option>
+              <option value="jpg">JPG</option>
+              <option value="pdf">PDF</option>
+              <option value="svg">SVG</option>
+            </select>
+          </div>
+
+          <div class="config_element">
+            <label for="size_input" class="config_label">サイズ</label>
+            <input type="number" id="size_input" class="config_input" value="256" min="64" max="1024">
+          </div>
+
+          <div class="config_element">
+            <label for="error_level_select" class="config_label">誤り訂正レベル</label>
+            <select id="error_level_select" class="config_input">
+              <option value="L">L（7%）</option>
+              <option value="M" selected>M（15%）</option>
+              <option value="Q">Q（25%）</option>
+              <option value="H">H（30%）</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+
+      <div id="button_base">
+        <button id="generate_button">生成</button>
+      </div>
+
+      <div id="qr_field">
+
+      </div>
+    </main>
+  </div>
+</body>
 </html>

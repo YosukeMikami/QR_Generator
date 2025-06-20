@@ -1,8 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
 import uvicorn
 from pydantic import BaseModel
 import qrgenerate
+from midcode import LengthError
 
 app = FastAPI()
 
@@ -17,11 +19,37 @@ app.add_middleware(
 
 class Request(BaseModel):
     text: str
+    error_correction_level: str
+    format: str
+    size: float
 
 
 @app.post("/generate/")
 def generate(request: Request):
-    return {"message": request.text}
+    try:
+        buf = qrgenerate.main(
+            request.text,
+            request.error_correction_level,
+            None,
+            request.format,
+            request.size,
+            blob=True
+        )
+    except LengthError:
+        raise HTTPException(
+            status_code=400,
+            detail="input text is too long"
+        )
+    if buf is not None:
+        return Response(
+            content=buf.read(),
+            media_type=f"image/{request.format}"
+        )
+    else:
+        raise HTTPException(
+            status_code=500,
+            detail="failed to generate"
+        )
 
 
 if __name__ == "__main__":

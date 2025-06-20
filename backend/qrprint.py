@@ -1,4 +1,7 @@
 import data
+import matplotlib.pyplot as plt
+import seaborn as sns
+import io
 
 
 def PrintFinderPattern(symbol):
@@ -140,3 +143,38 @@ def PrintWholeCode(symbol, data_code_blocks, error_code_blocks):
         if not updated:
             break
         error_index += 1
+
+
+def OutputQRAsImage(symbol, size, output_file):
+    cm = 1 / 2.54
+    plt.figure(figsize=(size * cm, size * cm))
+    sns.heatmap(symbol.symbol.T, cbar=False, square=True, cmap="binary")
+    quiet_zone_ratio = 4 / (symbol.symbol.shape[0] + 8)
+    plt.subplots_adjust(
+        left = quiet_zone_ratio,
+        right = 1 - quiet_zone_ratio,
+        bottom = quiet_zone_ratio,
+        top = 1 - quiet_zone_ratio
+    )
+    plt.axis("off")
+    plt.savefig(output_file)
+
+
+def OutputQRAsBlob(symbol, size, format):
+    cm = 1 / 2.54
+    plt.figure(figsize=(size * cm, size * cm))
+    sns.heatmap(symbol.symbol.T, cbar=False, square=True, cmap="binary")
+    quiet_zone_ratio = 4 / (symbol.symbol.shape[0] + 8)
+    plt.subplots_adjust(
+        left = quiet_zone_ratio,
+        right = 1 - quiet_zone_ratio,
+        bottom = quiet_zone_ratio,
+        top = 1 - quiet_zone_ratio
+    )
+    plt.axis("off")
+
+    buf = io.BytesIO()
+    plt.savefig(buf, format=format)
+    plt.close()
+    buf.seek(0)
+    return buf
