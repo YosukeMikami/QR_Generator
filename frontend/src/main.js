@@ -1,4 +1,7 @@
 async function ButtonClick() {
+  let generate_button = document.getElementById("generate_button");
+  generate_button.classList.add("cannot_generate");
+  generate_button.classList.remove("can_generate");
   const text = document.getElementById("input_text").value;
   if (text == "") {
     return;
@@ -26,6 +29,9 @@ async function ButtonClick() {
   const d = new Date();
   a.download = `qr_code_${d.getTime()}.${format}`;
   a.classList.add("can_download");
+  a.classList.remove("cannot_download");
+  generate_button.classList.add("can_generate");
+  generate_button.classList.remove("cannot_generate");
 }
 
 function CanGenerateCheck() {
@@ -43,6 +49,11 @@ function CanGenerateCheck() {
     generate_button.classList.add("cannot_generate");
     generate_button.classList.remove("can_generate");
   }
+}
+
+function AdjustPopover() {
+  let popover = document.getElementById("ecl_hint");
+  const pop_button = document.getElementById("pop_button");
 }
 
 let button = document.getElementById("generate_button");

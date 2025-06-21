@@ -18,7 +18,8 @@ body {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
-h1, h2 {
+h1 {
+  font-size: 40px;
   text-align: center;
 }
 
@@ -81,6 +82,23 @@ textarea {
   padding: 5px 20px;
 }
 
+#pop_button {
+  height: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: none;
+  background: #4ea3ff;
+  color: yellow;
+}
+
+#ecl_hint {
+  width: 30%;
+  background-color: #b0b0b0;
+  font-size: 15px;
+  border-radius: 10px;
+  margin: 0;
+}
+
 #button_base {
   display: flex;
   justify-content: center;
@@ -122,6 +140,14 @@ textarea {
   margin-top: 30px;
 }
 
+#note_base {
+  width: 100%;
+  display: flex;
+  justify-content: left;
+  padding: 0 5%;
+  margin: 10px 0 0;
+}
+
 #qr_base {
   width: 100%;
   display: flex;
@@ -138,7 +164,7 @@ textarea {
   background-size: 60px 60px;
   background-color: #FFF;
   box-sizing: border-box;
-  margin: 15px 0px 0px;
+  margin: 5px 0px 0px;
   display: flex;
   justify-content: center;
   align-items: center;
