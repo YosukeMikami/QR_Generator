@@ -146,9 +146,9 @@ def PrintWholeCode(symbol, data_code_blocks, error_code_blocks):
 
 
 def OutputQRAsImage(symbol, size, output_file):
-    cm = 1 / 2.54
-    plt.figure(figsize=(size * cm, size * cm))
+    plt.figure(figsize=(size, size))
     sns.heatmap(symbol.symbol.T, cbar=False, square=True, cmap="binary")
+    # plt.imshow(symbol.symbol.T, cmap="binary", interpolation="nearest")
     quiet_zone_ratio = 4 / (symbol.symbol.shape[0] + 8)
     plt.subplots_adjust(
         left = quiet_zone_ratio,
@@ -161,8 +161,7 @@ def OutputQRAsImage(symbol, size, output_file):
 
 
 def OutputQRAsBlob(symbol, size, format):
-    cm = 1 / 2.54
-    plt.figure(figsize=(size * cm, size * cm))
+    plt.figure(figsize=(size, size))
     sns.heatmap(symbol.symbol.T, cbar=False, square=True, cmap="binary")
     quiet_zone_ratio = 4 / (symbol.symbol.shape[0] + 8)
     plt.subplots_adjust(

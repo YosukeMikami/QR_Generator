@@ -1,6 +1,7 @@
 import errorcorrectiondata as ecd
 from errorcode import CalculateRemainder
 from data import Mode, EncodeSize, LenIndicatorLen
+from midcode import DataCodeWordCapacity
 
 
 class Segment:
@@ -133,20 +134,24 @@ def ExclusiveTypeOf(char):
            else Mode.kEightBitByte
 
 
-def Encode(message):
-    code = []
-    segment = Segment(ExclusiveTypeOf(message[0]), EncodeSize.kSmall)
-    segment.message += message[0]
-    for char in message[1:]:
-        char_type = ExclusiveTypeOf(char)
-        if segment.mode == char_type:
-            segment.message += char
-        else:
-            code.extend(segment.Encode())
-            segment = Segment(char_type, EncodeSize.kSmall)
-            segment.message += char
-    code.extend(segment.Encode())
-    return code
+def Encode(message, error_correction_level):
+    for encode_size in [EncodeSize.kLarge, EncodeSize.kMedium, EncodeSize.kSmall]:
+        code = []
+        segment = Segment(ExclusiveTypeOf(message[0]), encode_size)
+        segment.message += message[0]
+        for char in message[1:]:
+            char_type = ExclusiveTypeOf(char)
+            if segment.mode == char_type:
+                segment.message += char
+            else:
+                code.extend(segment.Encode())
+                segment = Segment(char_type, encode_size)
+                segment.message += char
+        code.extend(segment.Encode())
+        data_code_bit_capacity = DataCodeWordCapacity(encode_size, error_correction_level) * 8
+        if encode_size == EncodeSize.kSmall or\
+           len(code) > data_code_bit_capacity:
+           return code
 
 
 def EncodeFormatInfo(error_correction_level, mask_pattern):
@@ -187,7 +192,6 @@ def EncodeVersionInfo(version):
     error_code = CalculateRemainder(code_shifted, [True, True, True, True, True, False, False, True, False, False, True, False, True])
     code.extend(error_code)
     res = ListToBit(code)
-    print(res)
     return res
 
 

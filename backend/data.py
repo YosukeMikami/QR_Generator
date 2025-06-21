@@ -1,5 +1,5 @@
 import math
-from enum import IntEnum, auto
+from enum import IntEnum
 
 import numpy as np
 
@@ -19,9 +19,9 @@ class Mode(IntEnum):
 
 
 class EncodeSize(IntEnum):
-    kSmall = auto()
-    kMedium = auto()
-    kLarge = auto()
+    kSmall = 0
+    kMedium = 9
+    kLarge = 26
 
 
 def SideLen(version):

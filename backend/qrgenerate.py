@@ -30,7 +30,7 @@ def main(input_string, error_correction_level, output_file=None, format="png", s
         else:
             error_correction_level = ecd.Level.kM
     # 入力データをエンコード
-    data_code = encode.Encode(input_string)
+    data_code = encode.Encode(input_string, error_correction_level)
     data_code_blocks, version = midcode.FormatCodeData4ECC(data_code, error_correction_level)
     # エラー訂正コード生成
     error_code_blocks = errorcode.GenerateErrorCodeBlocks(data_code_blocks, version, error_correction_level)
@@ -57,4 +57,4 @@ def main(input_string, error_correction_level, output_file=None, format="png", s
         return None
 
 if __name__ == "__main__":
-    main(input(), ecd.Level.kM, "fig.png")
+    main(input(), ecd.Level.kL, "fig.png")
