@@ -22,14 +22,14 @@
               <option value="png" selected>PNG</option>
               <option value="jpeg">JPEG</option>
               <option value="jpg">JPG</option>
-              <option value="pdf">PDF</option>
-              <option value="svg">SVG</option>
+              <!-- <option value="pdf">PDF</option>
+              <option value="svg+xml">SVG</option> -->
             </select>
           </div>
 
           <div class="config_element">
-            <label for="size_input" class="config_label">サイズ</label>
-            <input type="number" id="size_input" class="config_input" value="256" min="64" max="1024">
+            <label for="size_input" class="config_label">サイズ（一辺[cm]）</label>
+            <input type="number" id="size_input" class="config_input" value="10" min="1.5" max="20">
           </div>
 
           <div class="config_element">
@@ -46,13 +46,23 @@
       </div>
 
       <div id="button_base">
-        <button id="generate_button">生成</button>
+        <button id="generate_button" class="cannot_generate">生成</button>
       </div>
 
-      <div id="qr_field">
-
+      <div id="qr_base">
+        <div id="qr_field">
+          <img id="qr_image">
+        </div>
       </div>
+      <div id="download_base">
+        <div id="download_field">
+          <a id="download_a" download="test.png" class="cannot_download">保存</a>
+        </div>
+      </div>
+
     </main>
   </div>
+
+  <script src="src/main.js"></script>
 </body>
 </html>
