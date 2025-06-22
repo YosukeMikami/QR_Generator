@@ -18,7 +18,7 @@ class Symbol:
         self.position = np.array([self.side_len - 1, self.side_len - 1])
 
 
-def main(input_string, error_correction_level, output_file=None, format="png", size=10., blob=False):
+def main(input_string, error_correction_level, output_file=None, format="png", pixel_num=10, dpi=100,  blob=False):
     assert blob or output_file is not None, "output_file is required when blob is False"
     if isinstance(error_correction_level, str):
         if error_correction_level == "L":
@@ -51,10 +51,10 @@ def main(input_string, error_correction_level, output_file=None, format="png", s
 
     # 出力
     if blob:
-        return qrprint.OutputQRAsBlob(symbol, size, format)
+        return qrprint.OutputQRAsBlob(symbol, pixel_num, dpi, format)
     else:
-        qrprint.OutputQRAsImage(symbol, size, output_file)
+        qrprint.OutputQRAsImage(symbol, pixel_num, dpi, output_file)
         return None
 
 if __name__ == "__main__":
-    main(input(), ecd.Level.kL, "fig.png")
+    main(input(), ecd.Level.kL, "fig.png", pixel_num=512, dpi=100)

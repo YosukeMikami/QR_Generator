@@ -2,6 +2,9 @@ import data
 import matplotlib.pyplot as plt
 import seaborn as sns
 import io
+# バックエンドを非GUIに
+import matplotlib
+matplotlib.use("Agg")
 
 
 def PrintFinderPattern(symbol):
@@ -145,8 +148,9 @@ def PrintWholeCode(symbol, data_code_blocks, error_code_blocks):
         error_index += 1
 
 
-def OutputQRAsImage(symbol, size, output_file):
-    plt.figure(figsize=(size, size))
+def OutputQRAsImage(symbol, pixel_num, dpi, output_file):
+    size = pixel_num / dpi
+    plt.figure(figsize=(size, size), dpi=dpi)
     sns.heatmap(symbol.symbol.T, cbar=False, square=True, cmap="binary")
     # plt.imshow(symbol.symbol.T, cmap="binary", interpolation="nearest")
     quiet_zone_ratio = 4 / (symbol.symbol.shape[0] + 8)
@@ -160,8 +164,9 @@ def OutputQRAsImage(symbol, size, output_file):
     plt.savefig(output_file)
 
 
-def OutputQRAsBlob(symbol, size, format):
-    plt.figure(figsize=(size, size))
+def OutputQRAsBlob(symbol, pixel_num, dpi, format):
+    size = pixel_num / dpi
+    plt.figure(figsize=(size, size), dpi=dpi)
     sns.heatmap(symbol.symbol.T, cbar=False, square=True, cmap="binary")
     quiet_zone_ratio = 4 / (symbol.symbol.shape[0] + 8)
     plt.subplots_adjust(

@@ -21,7 +21,8 @@ class Request(BaseModel):
     text: str
     error_correction_level: str
     format: str
-    size: float
+    size: int
+    dpi: int
 
 
 @app.post("/generate/")
@@ -30,9 +31,9 @@ def generate(request: Request):
         buf = qrgenerate.main(
             request.text,
             request.error_correction_level,
-            None,
-            request.format,
-            request.size,
+            format=request.format,
+            pixel_num=request.size,
+            dpi=request.dpi,
             blob=True
         )
     except LengthError:

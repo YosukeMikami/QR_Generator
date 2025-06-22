@@ -2,6 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
   <title>QRコード生成</title>
   <link rel="stylesheet" href="src/style.css">
 </head>
@@ -28,18 +29,22 @@
           </div>
 
           <div class="config_element">
-            <label for="size_input" class="config_label">サイズ（一辺［インチ］）</label>
+            <label for="size_input" class="config_label">サイズ[px]</label>
             <select type="number" id="size_input" class="config_input">
-              <option value="1" selected>1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-              <option value="9">9</option>
-              <option value="10">10</option>
+              <option value="128">128</option>
+              <option value="256" selected>256</option>
+              <option value="512">512</option>
+              <option value="1024">1024</option>
+              <option value="2048">2048</option>
+            </select>
+          </div>
+
+          <div class="config_element">
+            <label for="dpi" class="config_label">解像度</label>
+            <select type="number" id="dpi" class="config_input">
+              <option value="100">低（画面向け; 100dpi）</option>
+              <option value="200" selected>中（印刷兼用; 200dpi）</option>
+              <option value="300">高（印刷向け; 300dpi）</option>
             </select>
           </div>
 
@@ -48,8 +53,8 @@
               <label for="error_level_select" class="config_label">誤り訂正レベル</label>
               <button id="pop_button" popovertarget="ecl_hint">i</button>
               <span id="ecl_hint" popover="auto" anchor="pop_button">
-                誤り訂正レベルとは汚れ等に対する強さ<br>
-                ただし、強くするほどコードの目が細かくなるため注意
+                <h4><b>誤り訂正レベル</b>とは汚れ等に対する強さ</h4>
+                ただし、強くするほどコードの目が細かくなり読み取りづらくなる可能性があるため注意
                 <ul>
                   <li>L: 7%程度の損傷まで復元可能</li>
                   <li>M: 15%程度の損傷まで復元可能</li>
@@ -75,23 +80,24 @@
 
       <div id="note_base">
         <span><b>プレビュー</b></span>
-        <span>（実際の画像サイズとは異なることがあります）</span>
+        <span id="note_description">（実際の画像サイズとは異なることがあります）</span>
       </div>
       <div id="qr_base">
         <div id="qr_field">
+          <div id="spinner" hidden="true"></div>
           <img id="qr_image">
         </div>
       </div>
       <div id="download_base">
         <div id="download_field">
-          <a id="download_a" download="test.png" class="cannot_download">ダウンロード</a>
+          <a id="download_a" class="cannot_download">ダウンロード</a>
         </div>
       </div>
 
     </main>
   </div>
 
-  <footer style="color: grey;">
+  <footer id="trademark_description">
     QRコードは株式会社デンソーウェーブの登録商標です。
   </footer>
   <script src="src/main.js"></script>
