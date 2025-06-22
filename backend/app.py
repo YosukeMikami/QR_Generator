@@ -38,7 +38,7 @@ def generate(request: Request):
         )
     except LengthError:
         raise HTTPException(
-            status_code=400,
+            status_code=422,
             detail="input text is too long"
         )
     if buf is not None:

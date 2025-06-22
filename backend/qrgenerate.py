@@ -57,4 +57,4 @@ def main(input_string, error_correction_level, output_file=None, format="png", p
         return None
 
 if __name__ == "__main__":
-    main(input(), ecd.Level.kL, "fig.png", pixel_num=512, dpi=100)
+    main(input(), ecd.Level.kH, "fig.png", pixel_num=512, dpi=100)

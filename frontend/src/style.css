@@ -253,6 +253,13 @@ a {
   color: #717171;
 }
 
+#error_message {
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  color: red;
+}
+
 /* スマホ用 */
 @media screen and (max-width: 480px) {
   .container {
@@ -353,5 +360,13 @@ a {
     border: none;
     border-radius: 4px;
     text-align: center;
+  }
+
+  #error_message {
+    font-size: 13px;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    color: red;
   }
 }
