@@ -29,7 +29,7 @@ async function ButtonClick() {
   const format = document.getElementById("format_select").value;
   const size = document.getElementById("size_input").value;
   const dpi = document.getElementById("dpi").value;
-  const res = await fetch("https://qr-generator-a338.onrender.com/generate", {
+  const res = await fetch("http://localhost:8000/generate", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
     body: JSON.stringify(
