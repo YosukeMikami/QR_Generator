@@ -24,9 +24,12 @@ class Request(BaseModel):
     size: int
     dpi: int
 
+@app.get("/ping/")
+async def ping():
+    return "OK"
 
 @app.post("/generate/")
-def generate(request: Request):
+async def generate(request: Request):
     try:
         buf = qrgenerate.main(
             request.text,
