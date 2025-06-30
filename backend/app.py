@@ -24,7 +24,7 @@ class Request(BaseModel):
     size: int
     dpi: int
 
-@app.get("/ping")
+@app.api_route("/ping", methods=["GET", "HEAD"])
 async def ping():
     return "OK"
 
